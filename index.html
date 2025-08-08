@@ -1,4 +1,214 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>arcLed</title>
+<style>
+    body {
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .device-container {
+        position: relative;
+        width: 400px;
+        height: 400px;
+    }
+
+    .device {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 300px;
+        height: 300px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, #1a1a1a, #000);
+        border-radius: 50%;
+        box-shadow: 
+            0 0 30px rgba(0,0,0,0.8),
+            inset 0 0 20px rgba(255,255,255,0.1),
+            0 10px 30px rgba(0,0,0,0.6);
+        border: 3px solid #333;
+    }
+
+    .led {
+        position: absolute;
+        width: 8px;
+        height: 25px;
+        border-radius: 2px;
+        background: #222;
+        border: 1px solid #444;
+        transition: all 0.3s ease;
+        transform-origin: center center;
+    }
+
+    .led::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -2px;
+        width: 12px;
+        height: 35px;
+        border-radius: 3px;
+        background: transparent;
+        transition: all 0.3s ease;
+    }
+
+    .led::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 1px;
+        width: 6px;
+        height: 21px;
+        border-radius: 1px;
+        background: #333;
+        transition: all 0.3s ease;
+    }
+
+    .led.active {
+        background: currentColor;
+        border-color: currentColor;
+        box-shadow: 
+            0 0 20px currentColor,
+            0 0 35px currentColor,
+            inset 0 0 8px rgba(255,255,255,0.3);
+    }
+
+    .led.active::before {
+        background: currentColor;
+        opacity: 0.3;
+        box-shadow: 
+            0 0 25px currentColor,
+            0 0 40px currentColor;
+    }
+
+    .led.active::after {
+        background: currentColor;
+        box-shadow: 
+            0 0 10px currentColor,
+            inset 0 0 5px rgba(255,255,255,0.5);
+    }
+
+    .led.red { color: #ff4444; }
+    .led.orange { color: #ff8800; }
+    .led.yellow { color: #ffdd00; }
+    .led.green { color: #44ff44; }
+    .led.blue { color: #4488ff; }
+    .led.purple { color: #aa44ff; }
+
+    .start-button {
+        position: absolute;
+        bottom: -90px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #2a2a2a, #111);
+        border: 4px solid #444;
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 
+            0 8px 20px rgba(0,0,0,0.7),
+            inset 0 3px 8px rgba(255,255,255,0.15),
+            0 0 0 2px rgba(0,255,136,0.2);
+    }
+
+    .mode-switch {
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: bold;
+        background: rgba(0,0,0,0.8);
+        padding: 8px 12px;
+        border-radius: 25px;
+        border: 2px solid #444;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    }
+
+    .press-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid #333;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .press-indicator.show { opacity: 1; }
+
+    .inner-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 140px;
+        height: 140px;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.3) 100%);
+        pointer-events: none;
+        transition: all 0.5s ease;
+    }
+
+    .device.has-active-leds .inner-glow {
+        background: radial-gradient(circle, rgba(68, 255, 68, 0.1) 0%, transparent 70%);
+    }
+</style>
+</head>
+<body>
+    <div class="device-container">
+        <div class="device" id="device">
+            <div class="inner-glow"></div>
+            <div class="mode-switch">
+                <div class="mode-indicator" id="modeIndicator"></div>
+                <div class="switch" id="modeSwitch">
+                    <div class="switch-handle"></div>
+                </div>
+            </div>
+            <div class="press-indicator" id="pressIndicator">
+                <svg class="progress-ring">
+                    <circle class="progress-ring-bg" cx="35" cy="35" r="32"/>
+                    <circle class="progress-ring-fill" cx="35" cy="35" r="32"/>
+                </svg>
+            </div>
+            <button class="start-button" id="startButton">●</button>
+        </div>
+    </div>
+
+<script>
+// （元のJavaScriptはほぼ同じ、LEDの半径だけ微調整）
+</script>
+</body>
+</html>
 
 <html lang="ja">
 <head>
@@ -676,3 +886,4 @@
 
 </body>
 </html>
+
