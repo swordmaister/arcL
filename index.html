@@ -16,36 +16,8 @@
         font-family: 'Arial', sans-serif;
     }
 
-    .device-container {
-        position: relative;
-        width: 300px;
-        height: 420px; /* 上下の余白確保 */
-    }
-
-    .mode-switch {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: #fff;
-        font-size: 12px;
-        font-weight: bold;
-        background: rgba(0,0,0,0.8);
-        padding: 8px 12px;
-        border-radius: 25px;
-        border: 2px solid #444;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.6);
-    }
-
     .device {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        position: relative;
         width: 300px;
         height: 300px;
         background: radial-gradient(circle, #1a1a1a, #000);
@@ -83,9 +55,10 @@
 
     .start-button {
         position: absolute;
-        bottom: 0;
+        top: 50%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%);
+        margin-top: 0px; /* 中央ぴったり */
         width: 70px;
         height: 70px;
         border-radius: 50%;
@@ -106,9 +79,7 @@
 </style>
 </head>
 <body>
-<div class="device-container">
-    <div class="mode-switch">MODE</div>
-    <div class="device" id="device"></div>
+<div class="device" id="device">
     <button class="start-button" id="startButton">●</button>
 </div>
 
@@ -116,11 +87,11 @@
 const device = document.getElementById('device');
 const colors = ["red", "orange", "yellow", "green", "blue", "purple"];
 const ledCount = 12;
-const radius = 130; // LED配置半径
+const radius = 130;
 let currentIndex = 0;
 let intervalId = null;
 
-// LED生成
+// LED配置生成
 for (let i = 0; i < ledCount; i++) {
     const led = document.createElement('div');
     led.classList.add('led', colors[i % colors.length]);
