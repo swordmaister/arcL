@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>arcLed</title>
+    <title>arcLed01</title>
     <style>
         body {
             margin: 0;
-            padding: 0; /* paddingを削除 */
+            padding: 60px; /* paddingを復活 */
             background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
             display: flex;
             justify-content: center;
@@ -20,13 +20,14 @@
 
 ```
     .device-container {
-        position: relative;
+        position: absolute; /* relativeからabsoluteに変更 */
+        top: 50%; /* 画面中央に配置 */
+        left: 50%; /* 画面中央に配置 */
         width: 400px;
         height: 400px;
+        transform: translate(-50%, -50%) rotate(280deg); /* 中央配置 + 回転 */
         transition: transform 0.5s ease;
-        transform: rotate(280deg);
-        /* 回転の中心を自分自身の中央に設定 */
-        transform-origin: center center;
+        transform-origin: center center; /* 自分自身の中心を回転軸に */
     }
 
     .device {
@@ -668,7 +669,8 @@
         }
         
         const deviceContainer = document.querySelector('.device-container');
-        deviceContainer.style.transform = `rotate(${deviceRotation}deg)`;
+        // translate(-50%, -50%)を保ちながら回転
+        deviceContainer.style.transform = `translate(-50%, -50%) rotate(${deviceRotation}deg)`;
         
         const rotationButton = document.getElementById('rotation-button');
         rotationButton.style.background = 'rgba(255, 255, 255, 0.8)';
