@@ -8,7 +8,7 @@
     <style>
         body {
             margin: 0;
-            padding: 60px;
+            padding: 0; /* paddingを削除 */
             background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
             display: flex;
             justify-content: center;
@@ -23,11 +23,10 @@
         position: relative;
         width: 400px;
         height: 400px;
-        margin: auto;
         transition: transform 0.5s ease;
         transform: rotate(280deg);
-        /* 回転の中心を明確に中央に設定 */
-        transform-origin: 200px 200px;
+        /* 回転の中心を自分自身の中央に設定 */
+        transform-origin: center center;
     }
 
     .device {
